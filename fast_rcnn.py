@@ -24,20 +24,9 @@ from torch import nn
 from torch.nn import functional as F
 
 from ..layers import MLP
-from ..losses import ICLoss, UPLoss, EDLLoss, UPLossv4, UPLossv5, UPLossv5_weighted, UPLossv5_advance, UPLossv5_advance_v2, \
-    UPLossv5_e_a, UPLossv5_fisher, UPLossv5_advance_v4, UPLossv5_advance_v5, UPLossv5_advance_v6, \
-    UPLossv5_fisher_v2, UPLossv5_edl_renyi2, ContrastiveWithCLIPSemantic, ContrastiveWithCLIPSemanticV2, ContrastiveWithCLIPSemanticV3, \
-    ContrastiveWithCLIPSemanticV4, ContrastiveWithCLIPSemanticV5, ContrastiveWithCLIPSemanticV6, UPLossv5_edl_renyi2_improved, \
-    ContrastiveWithVisualPrototypes, ContrastiveWithCLIPSemanticV8, ContrastiveWithCLIPSemanticV9Reciprocal, ProtoReciprocalLoss12, ProtoReciprocalLoss13
-from zzz import ProtoLossPlugIn
-
-from prpl import PRPL
-
-# from palm import PALM
-
-
-
-from rpl import RPLoss
+# from ..losses import ICLoss, UPLoss, UPLossv5_advance_v2
+from u2d import Loss_ud
+from pnpl import PNPL
 
 ROI_BOX_OUTPUT_LAYERS_REGISTRY = Registry("ROI_BOX_OUTPUT_LAYERS")
 ROI_BOX_OUTPUT_LAYERS_REGISTRY.__doc__ = """
@@ -234,39 +223,15 @@ class OpenDetFastRCNNOutputLayers(CosineFastRCNNOutputLayers):
     ):
         super().__init__(*args, **kargs)
         self.num_known_classes = num_known_classes
+
         self.max_iters = max_iters
 
-        self.proto_loss = ProtoLossPlugIn(
-            num_classes=15,
-            feat_dim=1024,
-            proj_dim=128,
-            num_prototypes_per_class=3,
-            temperature=0.07,
-            margin=0.2,
-            ema_momentum=0.9
-        )
+        self.ud_loss = Loss_ud(self.num_classes, sampling_metric='edl', topk=up_loss_topk)
+        self.pnpl = PNPL(known_num_classes=self.num_known_classes)
 
-        # (temperature=0.1, beta=0.1, gamma=1.0, lambda_intra=0.1, lambda_inter=0.1, num_classes=20):
-        # self.cm_loss = ContrastiveWithCLIPSemanticV4(temperature=0.1, beta=1.0, gamma=1.0, num_classes=20)
-        # self.cm_loss = ContrastiveWithCLIPSemanticV8(temperature=0.1, beta=1.0, gamma=1.0, num_classes=15)
-        # self.prLoss = ProtoReciprocalLoss12(num_classes=15, feature_dim=128, proj_hidden=128, proj_out=128)
-        # self.prLoss = ProtoReciprocalLoss13(num_classes=15, feature_dim=128, proj_hidden=128, proj_out=128)
-        # self.cm_loss = ContrastiveWithCLIPSemanticV9Reciprocal(temperature=0.1, margin=0.5, lambda_repel=0.1, lambda_anti=0.1, lambda_sep=0.01, num_classes=15, feature_dim=128)
-        # self.up_loss = UPLossv4(self.num_classes, sampling_metric='edl', topk=up_loss_topk)
-
-        self.up_loss = UPLossv5_advance_v2(self.num_classes, sampling_metric='edl', topk=up_loss_topk)
-
-        # self.up_loss = UPLossv5_edl_renyi2_improved(self.num_classes, topk=up_loss_topk)
-        # self.up_loss = UPLossv5_edl_renyi2(self.num_classes, topk=up_loss_topk)
-
-        # UPLossv5_edl_renyi2
         self.up_loss_start_iter = up_loss_start_iter
         self.up_loss_weight = up_loss_weight
 
-        self.prpl = PRPL(num_classes=15)
-
-        # self.prpl = PRPL(num_classes=15, in_dim=1024)
-        # self.rpl = RPLoss()
         # self.encoder = MLP(self.cls_score.in_features, ic_loss_out_dim)
 
         '''
@@ -325,41 +290,10 @@ class OpenDetFastRCNNOutputLayers(CosineFastRCNNOutputLayers):
     def get_up_loss(self, scores, gt_classes, IoU):
         storage = get_event_storage()
         if storage.iter > self.up_loss_start_iter:
-            loss_cls_up = self.up_loss(scores, gt_classes)
+            loss_cls_up = self.ud_loss(scores, gt_classes)
         else:
             loss_cls_up = scores.new_tensor(0.0)
         return {"loss_cls_up": loss_cls_up}
-
-    def get_ic_loss(self, feat, gt_classes, ious):
-        # select foreground and iou > thr instance in a mini-batch
-        pos_inds = (ious > self.ic_loss_batch_iou_thr) & (gt_classes != self.num_classes)
-        feat, gt_classes = feat[pos_inds], gt_classes[pos_inds]
-
-        queue = self.queue.reshape(-1, self.ic_loss_out_dim)
-        queue_label = self.queue_label.reshape(-1)
-        queue_inds = queue_label != -1  # filter empty queue
-        queue, queue_label = queue[queue_inds], queue_label[queue_inds]
-
-        loss_ic_loss = self.ic_loss_loss(feat, gt_classes, queue, queue_label)
-        # loss decay
-        storage = get_event_storage()
-        decay_weight = 1.0 - storage.iter / self.max_iters
-        return {"loss_cls_ic": self.ic_loss_weight * decay_weight * loss_ic_loss}
-
-    def get_cm_loss(self, feat, gt_classes, ious):
-
-        loss_cm_loss = self.cm_loss(feat, gt_classes, ious)
-
-        return {"loss_cls_cm": loss_cm_loss}
-
-    def get_pr_loss(self, feat, gt_classes, ious):
-        valid_mask = (gt_classes >= 0) & (gt_classes < self.num_classes)
-
-        labels_fg = gt_classes[valid_mask]
-        features_fg = feat[valid_mask]
-        loss_pr_loss = self.prLoss(features_fg, labels_fg, ious)
-
-        return {"loss_pr_loss": loss_pr_loss}
 
     @torch.no_grad()
     def _dequeue_and_enqueue(self, feat, gt_classes, ious, iou_thr=0.7):
@@ -404,9 +338,6 @@ class OpenDetFastRCNNOutputLayers(CosineFastRCNNOutputLayers):
 
         scores, proposal_deltas, cls_x = predictions
 
-        # scores:  torch.Size([1024, 82])
-        # gt_classes:  torch.Size([1024])
-
         # parse classification outputs
         gt_classes = (cat([p.gt_classes for p in proposals], dim=0) if len(proposals) else torch.empty(0))
         _log_classification_stats(scores, gt_classes)
@@ -422,21 +353,15 @@ class OpenDetFastRCNNOutputLayers(CosineFastRCNNOutputLayers):
         losses = {"loss_cls_ce": cross_entropy(scores, gt_classes, reduction="mean"), "loss_box_reg": self.box_reg_loss(proposal_boxes, gt_boxes, proposal_deltas, gt_classes)}
 
         ious = cat([p.iou for p in proposals], dim=0)
-
         losses.update(self.get_up_loss(scores, gt_classes, ious))
 
-        # losses.update(self.palm(cls_x, gt_classes))
-# 
-        valid_mask = (gt_classes >= 0) & (gt_classes < 15)
+        valid_mask = (gt_classes >= 0) & (gt_classes < self.num_known_classes)
         gt_classes_fg = gt_classes[valid_mask]
         cls_x_fg = cls_x[valid_mask]
-
-        losses.update(self.palm(cls_x_fg, gt_classes_fg))
+        losses.update(self.pnpl(cls_x_fg, gt_classes_fg))
 
         # self._dequeue_and_enqueue(mlp_feat, gt_classes, ious, iou_thr=self.ic_loss_queue_iou_thr)
         # losses.update(self.get_ic_loss(mlp_feat, gt_classes, ious))
-        # losses.update(self.get_pr_loss(mlp_feat, gt_classes, ious))
-        # losses.update(self.get_cm_loss(mlp_feat, gt_classes, ious))
 
         return {k: v * self.loss_weight.get(k, 1.0) for k, v in losses.items()}
 
