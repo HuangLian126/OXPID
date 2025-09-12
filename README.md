@@ -8,19 +8,24 @@ We provide modifications that integrate the **PNPL** and **D2D** modules to impr
 # Step 1. Environment Setup
 ############################################################
 
-# Create and activate conda environment
-conda create -n oxpid python=3.8 -y
-conda activate oxpid
+# OXPID
 
-# Install PyTorch + CUDA
-pip install torch==1.8.1+cu102 torchvision==0.9.1+cu102 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
+This repository is based on the **[OpenDet](https://github.com/csuhan/opendet2)** codebase.  
+We provide modifications that integrate the **PNPL** and **D2D** modules to improve open-set X-ray prohibited item detection.
 
-# Install Detectron2
-pip install detectron2==0.4 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu102/torch1.8/index.html
+---
 
-# Install other dependencies
-pip install yacs tqdm scipy opencv-python
+## 1. Environment Requirements
 
+We recommend using the same environment settings as OpenDet.  
+Below is a tested configuration:
+
+- Python 3.7+
+- PyTorch 1.9.1
+- CUDA 11.3
+- Detectron2 0.6
+- torchvision 0.9.1
+- Other dependencies: `yacs`, `tqdm`, `scipy`, `opencv-python`
 
 ############################################################
 # Step 2. Download and Setup Code
@@ -42,12 +47,7 @@ cp ../OXPID/D2D.py  detectron2/modeling/roi_heads/
 # Step 3. Training
 ############################################################
 
-# Train the OXPID model with 4 GPUs
-python tools/train_net.py \
-  --num-gpus 4 \
-  --config-file configs/opendet/oxpid_R_50_C4.yaml \
-  OUTPUT_DIR ./output/oxpid_R_50_C4
-
-
+# Train the OXPID model with 1 GPUs
+python tools/train_net.py --num-gpus 1 --config-file configs/faster_rcnn_R_50_FPN_3x_opendet.yaml
 ############################################################
 # Ste
