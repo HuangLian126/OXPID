@@ -27,11 +27,6 @@ cd opendet2
 # Replace the original fast_rcnn.py file with the one provided in this repository
 cp ../OXPID/fast_rcnn.py detectron2/modeling/roi_heads/fast_rcnn.py
 
-# Copy the PNPL and D2D modules into the appropriate directory
-cp ../OXPID/PNPL.py detectron2/modeling/roi_heads/
-cp ../OXPID/D2D.py  detectron2/modeling/roi_heads/
-
-
 ############################################################
 # Step 3. Training
 ############################################################
