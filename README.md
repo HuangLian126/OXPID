@@ -8,11 +8,7 @@ We provide modifications that integrate the **PNPL** and **D2D** modules to impr
 # Step 1. Environment Setup
 ############################################################
 
-## 1. Environment Requirements
-
-We recommend using the same environment settings as OpenDet.  
-Below is a tested configuration:
-
+We recommend using the same environment settings as OpenDet. Below is a tested configuration:
 - Python 3.7+
 - PyTorch 1.9.1
 - CUDA 11.3
