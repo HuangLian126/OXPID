@@ -1,26 +1,30 @@
 # OXPID
 
-# ==========================================================
-# 1. Environment Setup
-# ==========================================================
+This repository is based on the **[OpenDet](https://github.com/csuhan/opendet2)** codebase.  
+We provide modifications that integrate the **PNPL** and **D2D** modules to improve open-set X-ray prohibited item detection.
+
+```bash
+############################################################
+# Step 1. Environment Setup
+############################################################
 
 # Create and activate conda environment
 conda create -n oxpid python=3.8 -y
 conda activate oxpid
 
-# Install PyTorch + CUDA (PyTorch 1.8.1 + CUDA 10.2)
+# Install PyTorch + CUDA
 pip install torch==1.8.1+cu102 torchvision==0.9.1+cu102 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
 
-# Install Detectron2 (compatible with PyTorch 1.8.1)
+# Install Detectron2
 pip install detectron2==0.4 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu102/torch1.8/index.html
 
 # Install other dependencies
 pip install yacs tqdm scipy opencv-python
 
 
-# ==========================================================
-# 2. Download and Setup Code
-# ==========================================================
+############################################################
+# Step 2. Download and Setup Code
+############################################################
 
 # Download the OpenDet code
 git clone https://github.com/csuhan/opendet2.git
@@ -34,9 +38,9 @@ cp ../OXPID/PNPL.py detectron2/modeling/roi_heads/
 cp ../OXPID/D2D.py  detectron2/modeling/roi_heads/
 
 
-# ==========================================================
-# 3. Training
-# ==========================================================
+############################################################
+# Step 3. Training
+############################################################
 
 # Train the OXPID model with 4 GPUs
 python tools/train_net.py \
@@ -45,14 +49,5 @@ python tools/train_net.py \
   OUTPUT_DIR ./output/oxpid_R_50_C4
 
 
-# ==========================================================
-# 4. Evaluation
-# ==========================================================
-
-# Evaluate a trained OXPID model
-python tools/train_net.py \
-  --num-gpus 4 \
-  --config-file configs/opendet/oxpid_R_50_C4.yaml \
-  --eval-only \
-  MODEL.WEIGHTS ./output/oxpid_R_50_C4/model_final.pth
-
+############################################################
+# Ste
