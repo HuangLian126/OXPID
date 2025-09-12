@@ -2,7 +2,7 @@
 
 This repository is based on the **[OpenDet](https://github.com/csuhan/opendet2)** codebase.  
 We provide modifications that integrate the **PNPL** and **D2D** modules to improve open-set X-ray prohibited item detection.
-
+https://1drv.ms/u/c/4d26ab976d8445b4/EXJgOsVEydpChdT-0Y5qbTEB2NeAhR2jjY5F0BwlM1wG0A?e=XfLDst
 ```bash
 ############################################################
 # Step 1. Environment Setup
