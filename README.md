@@ -15,8 +15,9 @@ Below is a tested configuration:
 - Other dependencies: `yacs`, `tqdm`, `scipy`, `opencv-python`
 git clone https://github.com/csuhan/opendet2.git
 cd opendet2
-## 2. Setup
 
+## 2. Setup
+Download the OpenDet code from the official repository:
 ```bash
 # 1. Download the OpenDet code from the official repository
 git clone https://github.com/csuhan/opendet2.git
@@ -28,3 +29,5 @@ cp ../OXPID/fast_rcnn.py detectron2/modeling/roi_heads/fast_rcnn.py
 # 3. Copy the PNPL and D2D modules into the appropriate directory
 cp ../OXPID/PNPL.py detectron2/modeling/roi_heads/
 cp ../OXPID/D2D.py  detectron2/modeling/roi_heads/
+
+
