@@ -8,13 +8,6 @@ We provide modifications that integrate the **PNPL** and **D2D** modules to impr
 # Step 1. Environment Setup
 ############################################################
 
-# OXPID
-
-This repository is based on the **[OpenDet](https://github.com/csuhan/opendet2)** codebase.  
-We provide modifications that integrate the **PNPL** and **D2D** modules to improve open-set X-ray prohibited item detection.
-
----
-
 ## 1. Environment Requirements
 
 We recommend using the same environment settings as OpenDet.  
