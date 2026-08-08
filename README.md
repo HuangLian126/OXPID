@@ -9,12 +9,12 @@ We provide the implementation of the proposed **PNPL** and **U²D** modules for 
 
 We recommend using the same environment settings as OpenDet. The following configuration has been tested:
 
-- 🐍 Python 3.7+
-- 🔥 PyTorch 1.9.1
-- 🚀 CUDA 11.3
-- 🧩 Detectron2 0.6
-- 📦 torchvision 0.9.1
-- 🔧 Other dependencies: `yacs`, `tqdm`, `scipy`, `opencv-python`
+-  Python 3.7+
+-  PyTorch 1.9.1
+-  CUDA 11.3
+-  Detectron2 0.6
+-  torchvision 0.9.1
+-  Other dependencies: `yacs`, `tqdm`, `scipy`, `opencv-python`
 
 ## 📥 Step 2. Download and Setup
 
