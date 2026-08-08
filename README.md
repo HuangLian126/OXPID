@@ -36,4 +36,3 @@ cp ../OXPID/fast_rcnn.py detectron2/modeling/roi_heads/fast_rcnn.py
 # Train the OXPID model with 1 GPUs
 python tools/train_net.py --num-gpus 1 --config-file configs/faster_rcnn_R_50_FPN_3x_opendet.yaml
 ############################################################
-# Ste
