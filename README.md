@@ -3,7 +3,7 @@
 This repository is based on the **[OpenDet](https://github.com/csuhan/opendet2)** codebase.  
 We provide modifications that integrate the **PNPL** and **D2D** modules to improve open-set X-ray prohibited item detection.
 
-📂 **OXPID Dataset**: [Download Link](https://1drv.ms/u/c/4d26ab976d8445b4/EXJgOsVEydpChdT-0Y5qbTEB2NeAhR2jjY5F0BwlM1wG0A?e=XfLDst)
+📂 **The first OXPID benchmark**: [Download Link](https://1drv.ms/u/c/4d26ab976d8445b4/IQD54S0e0EVDS55gd1C4T2yPAbkFDkVKPBc6JCu6F2pJ0FI?e=jxnLTG)
 
 ```bash
 ############################################################
