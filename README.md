@@ -4,6 +4,7 @@ This repository is built upon the **[OpenDet](https://github.com/csuhan/opendet2
 We provide the implementation of the proposed **PNPL** and **U²D** modules for open-set X-ray prohibited item detection.
 
 📂 **The first OXPID Benchmark:** [Download Link](https://1drv.ms/u/c/4d26ab976d8445b4/IQD54S0e0EVDS55gd1C4T2yPAbkFDkVKPBc6JCu6F2pJ0FI?e=jxnLTG)
+
 📂 **The second OXPID Benchmark:** [Download Link](https://pan.baidu.com/s/1r6Ornktr0gva_Kg7Qr5b8g 提取码: nma1)
 
 ## ⚙️ Step 1. Environment Setup
