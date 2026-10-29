@@ -1,7 +1,8 @@
 # OXPID
 
 This repository provides the implementation of our paper, “Open-set X-ray Prohibited Item Detection via Uncertainty-aware Unknown Discovery and Positive-Negative Prototype Learning,” accepted for publication in IEEE Transactions on Information Forensics and Security (TIFS).
-We provide the implementation of the proposed **PNPL** and **U²D** modules for open-set X-ray prohibited item detection.
+
+Built upon the **[OpenDet](https://github.com/csuhan/opendet2)** codebase, our framework introduces **U²D** and **PNPL** for open-set X-ray prohibited item detection.
 
 📂 **The first OXPID Benchmark:** [Download Link](https://1drv.ms/u/c/4d26ab976d8445b4/IQD54S0e0EVDS55gd1C4T2yPAbkFDkVKPBc6JCu6F2pJ0FI?e=jxnLTG)
 
